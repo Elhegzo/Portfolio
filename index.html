@@ -522,6 +522,16 @@
       font-style: italic;
     }
 
+    .about-profile-photo {
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+      filter: grayscale(20%) contrast(1.05);
+      border-bottom: var(--border);
+    }
+
     .about-sidebar {
       display: flex;
       flex-direction: column;
@@ -984,12 +994,6 @@
       font-size: 0.9rem;
       font-weight: 400;
       color: var(--text);
-      transition: color var(--transition), padding-left var(--transition);
-    }
-
-    .skill-item:hover {
-      color: var(--accent);
-      padding-left: 4px;
     }
 
     .skill-item::before {
@@ -1192,6 +1196,38 @@
       .impact-block {
         padding: 36px 20px;
       }
+
+      .hero-name {
+        font-size: clamp(3.2rem, 16vw, 5rem);
+      }
+
+      .hero-ghost {
+        font-size: clamp(8rem, 40vw, 12rem);
+      }
+
+      .skill-group {
+        padding: 28px 24px 32px;
+      }
+
+      .contact-ctas {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .contact-ctas .btn-accent,
+      .contact-ctas .btn-ghost {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    /* Restore native cursor on touch/mobile devices */
+    @media (hover: none) and (pointer: coarse) {
+      html { cursor: auto; }
+      button { cursor: pointer; }
+      .story-card { cursor: pointer; }
+      .modal-close { cursor: pointer; }
+      #cursor-dot, #cursor-ring { display: none; }
     }
   </style>
 </head>
@@ -1246,7 +1282,7 @@
         <p class="hero-tagline reveal reveal-delay-2">I build products from 0 to 1. I ship, measure, and iterate.</p>
         <div class="hero-ctas reveal reveal-delay-3">
           <a href="#experience" class="btn-accent">See My Work</a>
-          <a href="mailto:mostafahegazy.personal@gmail.com" class="btn-ghost">Download Resume</a>
+          <a href="Mostafa Hegazy PM.pdf" download class="btn-ghost">Download Resume</a>
         </div>
       </div>
       <div class="hero-right" aria-hidden="true">
@@ -1272,6 +1308,7 @@
           <p class="reveal reveal-delay-3"><em>Product Manager by title. Builder by instinct.</em></p>
         </div>
         <aside class="about-sidebar reveal reveal-delay-2">
+          <img src="profile.jpg" alt="Mostafa Hegazy" class="about-profile-photo" loading="lazy" />
           <div class="meta-block">
             <p class="meta-key">Location</p>
             <p class="meta-val">Montreal, QC<br><small style="color:var(--text-muted);font-size:0.8em;">Open to hybrid + remote Canada</small></p>
@@ -1335,7 +1372,7 @@
       <div class="contact-ctas reveal reveal-delay-3">
         <a href="mailto:mostafahegazy.personal@gmail.com" class="btn-accent" aria-label="Send email to Mostafa">Email Me</a>
         <a href="https://linkedin.com/in/mostafahegazy1" target="_blank" rel="noopener noreferrer" class="btn-ghost" aria-label="View LinkedIn profile">LinkedIn</a>
-        <a href="#" class="btn-ghost" aria-label="Download resume (coming soon)">Download Resume</a>
+        <a href="Mostafa Hegazy PM.pdf" download class="btn-ghost" aria-label="Download resume">Download Resume</a>
       </div>
     </div>
   </section>
@@ -1803,55 +1840,59 @@
     });
 
     /* ============================================================
-       CUSTOM CURSOR
+       CUSTOM CURSOR (desktop only)
     ============================================================ */
-    const dot = document.getElementById('cursor-dot');
-    const ring = document.getElementById('cursor-ring');
-    let ringX = 0, ringY = 0;
-    let mouseX = 0, mouseY = 0;
-    let rafId;
+    const isTouchDevice = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+    if (!isTouchDevice) {
+      const dot = document.getElementById('cursor-dot');
+      const ring = document.getElementById('cursor-ring');
+      let ringX = 0, ringY = 0;
+      let mouseX = 0, mouseY = 0;
 
-    document.addEventListener('mousemove', e => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-      dot.style.left = mouseX + 'px';
-      dot.style.top = mouseY + 'px';
-    });
+      document.addEventListener('mousemove', e => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        dot.style.left = mouseX + 'px';
+        dot.style.top = mouseY + 'px';
+      });
 
-    function animateCursor() {
-      ringX += (mouseX - ringX) * 0.12;
-      ringY += (mouseY - ringY) * 0.12;
-      ring.style.left = ringX + 'px';
-      ring.style.top = ringY + 'px';
-      rafId = requestAnimationFrame(animateCursor);
+      function animateCursor() {
+        ringX += (mouseX - ringX) * 0.12;
+        ringY += (mouseY - ringY) * 0.12;
+        ring.style.left = ringX + 'px';
+        ring.style.top = ringY + 'px';
+        requestAnimationFrame(animateCursor);
+      }
+
+      animateCursor();
+
+      document.addEventListener('mouseleave', () => {
+        dot.style.opacity = '0';
+        ring.style.opacity = '0';
+      });
+
+      document.addEventListener('mouseenter', () => {
+        dot.style.opacity = '1';
+        ring.style.opacity = '1';
+      });
     }
 
-    animateCursor();
-
-    document.addEventListener('mouseleave', () => {
-      dot.style.opacity = '0';
-      ring.style.opacity = '0';
-    });
-
-    document.addEventListener('mouseenter', () => {
-      dot.style.opacity = '1';
-      ring.style.opacity = '1';
-    });
-
     /* ============================================================
-       HERO PARALLAX
+       HERO PARALLAX (desktop only)
     ============================================================ */
-    const heroSection = document.getElementById('hero');
+    if (!isTouchDevice) {
+      const heroSection = document.getElementById('hero');
 
-    window.addEventListener('scroll', () => {
-      const scrolled = window.scrollY;
-      if (scrolled < window.innerHeight) {
-        const heroLeft = heroSection.querySelector('.hero-left');
-        if (heroLeft) {
-          heroLeft.style.transform = `translateY(${scrolled * 0.18}px)`;
+      window.addEventListener('scroll', () => {
+        const scrolled = window.scrollY;
+        if (scrolled < window.innerHeight) {
+          const heroLeft = heroSection.querySelector('.hero-left');
+          if (heroLeft) {
+            heroLeft.style.transform = `translateY(${scrolled * 0.18}px)`;
+          }
         }
-      }
-    }, { passive: true });
+      }, { passive: true });
+    }
 
     /* ============================================================
        INIT
