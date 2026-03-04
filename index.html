@@ -1222,12 +1222,12 @@
     }
 
     /* Restore native cursor on touch/mobile devices */
-    @media (hover: none) and (pointer: coarse) {
+    @media (pointer: coarse) {
       html { cursor: auto; }
       button { cursor: pointer; }
       .story-card { cursor: pointer; }
       .modal-close { cursor: pointer; }
-      #cursor-dot, #cursor-ring { display: none; }
+      #cursor-dot, #cursor-ring { display: none !important; visibility: hidden; }
     }
   </style>
 </head>
@@ -1842,7 +1842,7 @@
     /* ============================================================
        CUSTOM CURSOR (desktop only)
     ============================================================ */
-    const isTouchDevice = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+    const isTouchDevice = window.matchMedia('(pointer: coarse)').matches || ('ontouchstart' in window);
     if (!isTouchDevice) {
       const dot = document.getElementById('cursor-dot');
       const ring = document.getElementById('cursor-ring');
